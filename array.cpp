@@ -89,3 +89,29 @@ public:
 	size_t size_;
 	T* data_;
 };
+
+template <typename U, typename Comp>
+U minimum(Array<U> & arr, Comp func)
+{
+	U min_val = arr[0];
+	for (size_t i = 1; i < arr.size(); ++i)
+	{	
+		if (func(arr[i], min_val))
+		{
+			min_val = arr[i];
+		}
+	}
+	return min_val;
+}
+
+unt main()
+{
+	bool less(int a, int b) { return a < b; }
+	struct Greater { bool operator()(int a, int b) const { return b < a; } };
+	Array<int> ints(3);
+	ints[0] = 10;
+	ints[1] = 2;
+	ints[2] = 15;
+	int min = minimum(ints, less); // min should be 2
+	int max = minimum(ints, Greater()); //  max should be 15
+}
