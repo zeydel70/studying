@@ -2,16 +2,61 @@
 #include <cstring> // strlen, strcpy
 
 struct String {
-	String(const char *str = "");
-	String(size_t n, char c);
-	~String();
+	String(const char *str = "") {
+		this-> size = strlen(str);
+		char* str_n = new char[this->size+1];
+		this->str = strcpy(str_n, str);
+    }
+	
+	String(size_t n, char c) {
+		this->size = n;
+		char* str_n = new char[n+1];
+		for (int i = 0; i < n; i++) {
+			str_n[i] = c;
+		}
+		str_n[n] = '\0';
+		this->str = str_n;
+	}
 
-    String(const String &other);
-    String &operator=(const String &other);
+	/* и деструктор */
+	~String() {
+		delete[] str;
+		str = 0;
+	}
 
-	void append(const String &other);
+
+    String(const String& other): size(other.size), str(new char[size+1]) {
+		for (size_t i = 0; i != size; i++) { this->str[i] = other.str[i]; }
+		this->str[size] = '\0';
+	}
+	
+    String& operator=(const String& other) {
+		if (this != &other)
+		{
+			delete[] str;
+			size = other.size;
+			str = new char[size + 1];
+			for (size_t i = 0; i != size; i++) { str[i] = other.str[i]; }
+			str[size] = '\0';
+		}
+		return *this;
+	}
+
+	void append(String &other) {
+       	size_t new_size =  this->size + other.size + 1;
+		char* str2 = new char[new_size];
+		for (int i = 0; i < this->size && i < new_size; i++) {
+			str2[i] = this->str[i];
+		}
+		for (int i = this->size; i < new_size; i++) {
+			str2[i] = other.str[i - this->size];
+		}
+		delete [] this->str;
+		this->str = str2;
+		this->size = new_size-1; 
+    }
     
-    	struct Substring
+    struct Substring
 	{
 		Substring(const char* _substr = "", unsigned _left = 0) : subsize(strlen(_substr)), substr(strcpy(new char[strlen(_substr) + 1], _substr)), left(_left) 
 		{}
